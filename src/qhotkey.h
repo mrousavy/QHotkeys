@@ -1,12 +1,15 @@
 #ifndef QHOTKEY_H
 #define QHOTKEY_H
-#include <QtCore>
 #include <functional>
+#include <QtCore>
 
+
+namespace Qt
+{
 /*!
  * \brief An enum representing modifier keys on the keyboard
  */
-enum class Modifier
+enum class ModifierKey
 {
     None    = 1 << 1,
     Control = 1 << 1,
@@ -22,38 +25,53 @@ class QHotkey
 {
     using callback_t = std::function<void(const QHotkey&)>;
 
+/////////////////
+/// FUNCTIONS ///
+/////////////////
 public:
     /*!
      * \brief QHotkey Create and hook a new Global Hotkey
      * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
      * \param key The actual key to be registered as a hotkey
      */
-    QHotkey(const Modifier modifiers, const Qt::Key key,
+    QHotkey(const ModifierKey modifiers, const Qt::Key key,
             const callback_t callback);
+    ~QHotkey();
 
+/////////////////
+///  MEMBER   ///
+/////////////////
 private:
-    const Modifier _modifiers;
+    const ModifierKey _modifiers;
     const Qt::Key _key;
     const callback_t _callback;
-    const size_t _hkid;
+    const int _hkid;
 
-    static size_t _ghkid;
+    static int _ghkid;
 
+/////////////////
+/// FUNCTIONS ///
+/////////////////
 private:
     void registerHotkey() const;
     void messageLoop() const;
+
+/////////////////
+///  STATICS  ///
+/////////////////
+private:
     /*!
      * \brief getKey Convert the given modifier to a platform specific modifier ID
      * \param modifier The given Modifier
      * \return A platform specific modifier ID for OS calls
      */
-    int getMod(const Modifier& modifier) const noexcept;
+    static int getMod(const ModifierKey& modifier) noexcept;
     /*!
      * \brief getKey Convert the given Qt key to a platform specific key ID
      * \param key The given Qt::Key
      * \return A platform specific key ID for OS calls
      */
-    int getKey(const Qt::Key& key) const noexcept;
+    static int getKey(const Qt::Key& key) noexcept;
 };
-
+}
 #endif // QHOTKEY_H
