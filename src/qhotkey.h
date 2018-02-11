@@ -20,7 +20,7 @@ enum class Modifier
  */
 class QHotkey
 {
-    using callbackType = std::function<void(const QHotkey&)>;
+    using callback_t = std::function<void(const QHotkey&)>;
 
 public:
     /*!
@@ -29,12 +29,12 @@ public:
      * \param key The actual key to be registered as a hotkey
      */
     QHotkey(const Modifier modifiers, const Qt::Key key,
-            const callbackType callback);
+            const callback_t callback);
 
 private:
     const Modifier _modifiers;
     const Qt::Key _key;
-    const callbackType _callback;
+    const callback_t _callback;
     const size_t _hkid;
 
     static size_t _ghkid;

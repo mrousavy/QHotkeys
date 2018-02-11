@@ -11,7 +11,7 @@
 size_t QHotkey::_ghkid = 0;
 
 QHotkey::QHotkey(const Modifier modifiers, const Qt::Key key,
-                 const callbackType callback)
+                 const callback_t callback)
     : _modifiers(modifiers), _key(key),
       _callback(callback), _hkid(_ghkid++)
 {
@@ -56,9 +56,9 @@ void QHotkey::registerHotkey() const
 
 int QHotkey::getMod(const Modifier& modifier) const noexcept
 {
-    return modifier;
+    return static_cast<int>(modifier);
 }
 int QHotkey::getKey(const Qt::Key& key) const noexcept
 {
-    return key;
+    return static_cast<int>(key);
 }
