@@ -55,6 +55,7 @@ private:
     const int _hkid;
     std::thread _loop;
     bool _stopReq;
+    bool _registered;
 
     static int _ghkid;
 
@@ -62,7 +63,7 @@ private:
 /// FUNCTIONS ///
 /////////////////
 private:
-    void registerHotkey() const;
+    void registerHotkey();
     void messageLoop() const;
 
 /////////////////
