@@ -1,13 +1,26 @@
 #ifndef QHOTKEY_WIN_H
 #define QHOTKEY_WIN_H
+#include <QtCore>
+
+#ifdef Q_OS_WIN
 #include "qhotkey.h"
 #include "helper.h"
 #include <Windows.h>
 
+int Qt::QHotkey::_ghkid = 0;
 struct Qt::QHotkey::PlatformData
 {
+    int _thrId;
     // TODO: PLATFORMDATA
 };
+
+Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
+                     const callback_t callback)
+    : _modifiers(modifiers), _key(key),
+      _callback(callback), _hkid(_ghkid++),
+      _loop(&Qt::QHotkey::registerHotkey, this),
+      _registered(false)
+{}
 
 Qt::QHotkey::~QHotkey()
 {
@@ -40,5 +53,6 @@ void Qt::QHotkey::messageLoop() const
         }
     }
 }
+#endif // Q_OS_WIN
 
 #endif // QHOTKEY_WIN_H

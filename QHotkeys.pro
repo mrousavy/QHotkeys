@@ -23,14 +23,14 @@ DEFINES += QT_DEPRECATED_WARNINGS \
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    src/qhotkey.cpp
+    src/qhotkey.cpp \
+    src/qhotkey_win.cpp \
+    src/qhotkey_osx.cpp \
+    src/qhotkey_linux.cpp
 
 HEADERS += \
     src/qhotkey.h \
-    src/helper.h \
-    src/qhotkey_win.h \
-    src/qhotkey_linux.h \
-    src/qhotkey_osx.h
+    src/helper.h
 
 msvc: LIBS += -luser32
 
