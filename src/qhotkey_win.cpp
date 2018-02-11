@@ -10,8 +10,8 @@
 int Qt::QHotkey::_ghkid = 0;
 struct Qt::QHotkey::PlatformData
 {
-    int _thrId;
-    // TODO: PLATFORMDATA
+    int thrId;
+    UINT wmId;
 };
 
 Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
@@ -19,17 +19,23 @@ Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
     : _modifiers(modifiers), _key(key),
       _callback(callback), _hkid(_ghkid++),
       _loop(&Qt::QHotkey::registerHotkey, this),
-      _registered(false)
+      _registered(false), _pData(new PlatformData)
 {}
 
 Qt::QHotkey::~QHotkey()
 {
+    // Send WM_QHOTKEY_UNHOOK message to messageLoop()
+    PostThreadMessage(_pData->thrId, _pData->wmId, NULL, NULL);
+    _loop.join();
     UnregisterHotKey(NULL, _hkid);
+    delete _pData;
 }
 
 void Qt::QHotkey::registerHotkey()
 {
-    qDebug() << _registered;
+    _pData->wmId = RegisterWindowMessage(L"WM_QHOTKEY_UNHOOK");
+    _pData->thrId = GetCurrentThreadId();
+
     if (_registered)
         throw std::runtime_error("This QHotkey instance is already registered!");
 
@@ -45,6 +51,7 @@ void Qt::QHotkey::messageLoop() const
 {
     MSG msg;
     while (GetMessage(&msg, NULL, NULL, NULL)) {
+        if (msg.message == _pData->wmId) return;
         if (msg.message == WM_HOTKEY &&
             msg.wParam == _hkid) {
             if (msg.wParam == _hkid) {
