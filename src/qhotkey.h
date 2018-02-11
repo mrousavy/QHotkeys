@@ -3,13 +3,18 @@
 #include <functional>
 #include <QtCore>
 
+#ifdef QHOTKEYS
+ #define QHOTKEYS_DLLSPEC Q_DECL_EXPORT
+#else
+ #define QHOTKEYS_DLLSPEC Q_DECL_IMPORT
+#endif
 
 namespace Qt
 {
 /*!
  * \brief An enum representing modifier keys on the keyboard
  */
-enum class ModifierKey
+enum class QHOTKEYS_DLLSPEC ModifierKey
 {
     None    = 1 << 1,
     Control = 1 << 1,
@@ -21,7 +26,7 @@ enum class ModifierKey
 /*!
  * \brief A hooked global hotkey
  */
-class QHotkey
+class QHOTKEYS_DLLSPEC QHotkey
 {
     using callback_t = std::function<void(const QHotkey&)>;
 
