@@ -15,7 +15,7 @@ namespace Qt
 /*!
  * \brief An enum representing modifier keys on the keyboard
  */
-enum class QHOTKEYS_DLLSPEC ModifierKey
+enum class /*QHOTKEYS_DLLSPEC*/ ModifierKey
 {
     None    = 1 << 1,
     Control = 1 << 1,
@@ -27,9 +27,8 @@ enum class QHOTKEYS_DLLSPEC ModifierKey
 /*!
  * \brief A hooked global hotkey
  */
-class QHOTKEYS_DLLSPEC QHotkey : public QObject
+class /*QHOTKEYS_DLLSPEC*/ QHotkey
 {
-    Q_OBJECT
     using callback_t = std::function<void(const QHotkey&)>;
 
 /////////////////
@@ -41,8 +40,11 @@ public:
      * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
      * \param key The actual key to be registered as a hotkey
      */
-    QHotkey(const ModifierKey modifiers, const Qt::Key key,
+    QHotkey(const ModifierKey modifiers, const Key key,
             const callback_t callback);
+    /*!
+      * \brief ~QHotkey Destroy and unhook the Hotkey
+      */
     ~QHotkey();
 
 /////////////////
@@ -50,12 +52,14 @@ public:
 /////////////////
 private:
     const ModifierKey _modifiers;
-    const Qt::Key _key;
+    const Key _key;
     const callback_t _callback;
     const int _hkid;
     std::thread _loop;
-    bool _stopReq;
     bool _registered;
+
+    struct PlatformData;
+    PlatformData* _pData;
 
     static int _ghkid;
 
@@ -65,23 +69,6 @@ private:
 private:
     void registerHotkey();
     void messageLoop() const;
-
-/////////////////
-///  STATICS  ///
-/////////////////
-private:
-    /*!
-     * \brief getKey Convert the given modifier to a platform specific modifier ID
-     * \param modifier The given Modifier
-     * \return A platform specific modifier ID for OS calls
-     */
-    static int getMod(const ModifierKey& modifier) noexcept;
-    /*!
-     * \brief getKey Convert the given Qt key to a platform specific key ID
-     * \param key The given Qt::Key
-     * \return A platform specific key ID for OS calls
-     */
-    static int getKey(const Qt::Key& key) noexcept;
 };
 }
 #endif // QHOTKEY_H
