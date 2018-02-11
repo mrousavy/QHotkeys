@@ -1,6 +1,7 @@
 #ifndef QHOTKEY_H
 #define QHOTKEY_H
 #include <QtCore>
+#include <functional>
 
 /*!
  * \brief An enum representing modifier keys on the keyboard
@@ -19,17 +20,40 @@ enum class Modifier
  */
 class QHotkey
 {
+    using callbackType = std::function<void(const QHotkey&)>;
+
 public:
     /*!
      * \brief QHotkey Create and hook a new Global Hotkey
      * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
      * \param key The actual key to be registered as a hotkey
      */
-    QHotkey(Modifier modifiers, Qt::Key key);
+    QHotkey(const Modifier modifiers, const Qt::Key key,
+            const callbackType callback);
 
 private:
-    Modifier _modifiers;
-    Qt::Key _key;
+    const Modifier _modifiers;
+    const Qt::Key _key;
+    const callbackType _callback;
+    const size_t _hkid;
+
+    static size_t _ghkid;
+
+private:
+    void registerHotkey() const;
+    void messageLoop() const;
+    /*!
+     * \brief getKey Convert the given modifier to a platform specific modifier ID
+     * \param modifier The given Modifier
+     * \return A platform specific modifier ID for OS calls
+     */
+    int getMod(const Modifier& modifier) const noexcept;
+    /*!
+     * \brief getKey Convert the given Qt key to a platform specific key ID
+     * \param key The given Qt::Key
+     * \return A platform specific key ID for OS calls
+     */
+    int getKey(const Qt::Key& key) const noexcept;
 };
 
 #endif // QHOTKEY_H
