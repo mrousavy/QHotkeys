@@ -30,6 +30,7 @@ HEADERS += \
     src/helper.h \
     src/qhotkey_win.h \
     src/qhotkey_linux.h \
+    src/qhotkey_osx.h
 
 msvc: LIBS += -luser32
 
