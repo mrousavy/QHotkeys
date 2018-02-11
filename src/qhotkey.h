@@ -1,7 +1,8 @@
 #ifndef QHOTKEY_H
 #define QHOTKEY_H
-#include <functional>
 #include <QtCore>
+#include <thread>
+#include <functional>
 
 #ifdef QHOTKEYS
  #define QHOTKEYS_DLLSPEC Q_DECL_EXPORT
@@ -26,8 +27,9 @@ enum class QHOTKEYS_DLLSPEC ModifierKey
 /*!
  * \brief A hooked global hotkey
  */
-class QHOTKEYS_DLLSPEC QHotkey
+class QHOTKEYS_DLLSPEC QHotkey : public QObject
 {
+    Q_OBJECT
     using callback_t = std::function<void(const QHotkey&)>;
 
 /////////////////
@@ -51,6 +53,8 @@ private:
     const Qt::Key _key;
     const callback_t _callback;
     const int _hkid;
+    std::thread _loop;
+    bool _stopReq;
 
     static int _ghkid;
 

@@ -1,5 +1,6 @@
 #include "qhotkey.h"
 #include <QtCore>
+#include <thread>
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -20,13 +21,14 @@ int QHotkey::_ghkid = 0;
 QHotkey::QHotkey(const ModifierKey modifiers, const Qt::Key key,
                  const callback_t callback)
     : _modifiers(modifiers), _key(key),
-      _callback(callback), _hkid(_ghkid++)
-{
-    registerHotkey();
-}
+      _callback(callback), _hkid(_ghkid++),
+      _loop(&QHotkey::registerHotkey, this),
+      _stopReq(false)
+{}
 
 QHotkey::~QHotkey()
 {
+    _stopReq = true;
 #ifdef Q_OS_WIN
     UnregisterHotKey(NULL, _hkid);
 #elif defined(Q_OS_OSX)
@@ -44,8 +46,7 @@ void QHotkey::messageLoop() const
 {
 #ifdef Q_OS_WIN
     MSG msg;
-    while (GetMessage(&msg, 0, 0, 0)) {
-        qDebug() << "Message!";
+    while (GetMessage(&msg, NULL, NULL, NULL)) {
         if (msg.message == WM_HOTKEY &&
             msg.wParam == _hkid) {
             qDebug() << "WM_HOTKEY!";
@@ -69,6 +70,7 @@ void QHotkey::registerHotkey() const
     auto result = RegisterHotKey(NULL, _hkid, getMod(_modifiers), getKey(_key));
     if (result == FALSE)
         throw std::runtime_error("Could not register hotkey! " + GetLastError());
+    messageLoop();
 #elif defined(Q_OS_OSX)
     // TODO: OSX IMPLEMENTATION
 #elif defined(Q_OS_LINUX)
