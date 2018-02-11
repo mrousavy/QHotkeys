@@ -14,11 +14,22 @@ enum class Modifier
     Meta    = 1 << 4
 };
 
+/*!
+ * \brief A hooked global hotkey
+ */
 class QHotkey
 {
-
 public:
-    QHotkey();
+    /*!
+     * \brief QHotkey Create and hook a new Global Hotkey
+     * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
+     * \param key The actual key to be registered as a hotkey
+     */
+    QHotkey(Modifier modifiers, Qt::Key key);
+
+private:
+    Modifier _modifiers;
+    Qt::Key _key;
 };
 
 #endif // QHOTKEY_H
