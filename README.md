@@ -1,2 +1,2 @@
 # QHotkeys
-🔠 A library implementing the missing global hotkeys functionality in the Qt framework
+🔠 A small and lightweight cross platform C++ library implementing a system-wide hotkey system for Qt
