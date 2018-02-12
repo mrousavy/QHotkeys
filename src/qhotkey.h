@@ -27,6 +27,10 @@ enum class QHOTKEYS_DLLSPEC ModifierKey
     Alt     = 1 << 3,
     Meta    = 1 << 4
 };
+inline ModifierKey operator|(ModifierKey a, ModifierKey b)
+{
+    return static_cast<ModifierKey>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 /*!
  * \brief A hooked global hotkey
