@@ -17,6 +17,22 @@
 namespace Qt
 {
 /*!
+ * \brief An enum representing modifier keys on the keyboard
+ */
+enum class QHOTKEYS_DLLSPEC ModifierKey
+{
+    None    = 1 << 0,
+    Control = 1 << 1,
+    Shift   = 1 << 2,
+    Alt     = 1 << 3,
+    Meta    = 1 << 4
+};
+inline ModifierKey operator|(ModifierKey a, ModifierKey b)
+{
+    return static_cast<ModifierKey>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+/*!
  * \brief A hooked global hotkey
  */
 class QHOTKEYS_DLLSPEC QHotkey : public QObject
@@ -30,9 +46,10 @@ class QHOTKEYS_DLLSPEC QHotkey : public QObject
 public:
     /*!
      * \brief QHotkey Create and hook a new Global Hotkey
-     * \param hotkeys The keys to bind the QHotkey to (e.g. ::Control | ::Alt | ::I)
+     * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
+     * \param key The actual key to be registered as a hotkey
      */
-    QHotkey(const Key hotkeys);
+    QHotkey(const ModifierKey modifiers, const Key key);
     /*!
       * \brief ~QHotkey Destroy and unhook the Hotkey
       */
@@ -50,10 +67,11 @@ signals:
 ///  MEMBER   ///
 /////////////////
 private:
-    const Key _keys;
+    const ModifierKey _modifiers;
+    const Key _key;
     const int _hkid;
-    std::thread _loop;
     bool _registered;
+    std::thread _loop;
 
     struct PlatformData;
     PlatformData* _pData;
@@ -66,10 +84,6 @@ private:
 private:
     void registerHotkey();
     void messageLoop() const;
-
-    static inline bool has(Qt::Key enumVar, Qt::Key flag) {
-        return (enumVar & flag) != 0;
-    }
 };
 }
 #endif // QHOTKEY_H
