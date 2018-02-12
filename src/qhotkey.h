@@ -4,10 +4,14 @@
 #include <thread>
 #include <functional>
 
-#ifdef QHOTKEYS
- #define QHOTKEYS_DLLSPEC Q_DECL_EXPORT
+#ifdef QHOTKEYS_SHAREDLIB
+ #ifdef QHOTKEYS_EXPORT
+  #define QHOTKEYS_DLLSPEC Q_DECL_EXPORT
+ #else
+  #define QHOTKEYS_DLLSPEC Q_DECL_IMPORT
+ #endif
 #else
- #define QHOTKEYS_DLLSPEC Q_DECL_IMPORT
+ #define QHOTKEYS_DLLSPEC
 #endif
 
 namespace Qt
@@ -15,7 +19,7 @@ namespace Qt
 /*!
  * \brief An enum representing modifier keys on the keyboard
  */
-enum class /*QHOTKEYS_DLLSPEC*/ ModifierKey
+enum class QHOTKEYS_DLLSPEC ModifierKey
 {
     None    = 1 << 0,
     Control = 1 << 1,
@@ -27,8 +31,9 @@ enum class /*QHOTKEYS_DLLSPEC*/ ModifierKey
 /*!
  * \brief A hooked global hotkey
  */
-class /*QHOTKEYS_DLLSPEC*/ QHotkey
+class QHOTKEYS_DLLSPEC QHotkey : public QObject
 {
+    Q_OBJECT
     using callback_t = std::function<void(const QHotkey&)>;
 
 /////////////////

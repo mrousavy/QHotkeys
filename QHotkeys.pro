@@ -4,8 +4,11 @@ TARGET = QHotkeys
 TEMPLATE = lib
 CONFIG += staticlib
 
-DEFINES += QT_DEPRECATED_WARNINGS \
-     QHOTKEYS
+DEFINES += QT_DEPRECATED_WARNINGS
+
+# If compiling .dll (shared library):
+# DEFINES += QHOTKEYS_SHAREDLIB
+# DEFINES += QHOTKEYS_EXPORT
 
 HEADERS += \
     src/qhotkey.h \
