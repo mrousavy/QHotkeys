@@ -14,11 +14,10 @@ struct Qt::QHotkey::PlatformData
     // TODO: PLATFORMDATA
 };
 
-Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key)
-    : _modifiers(modifiers), _key(key),
-      _hkid(_ghkid++), _registered(false),
+Qt::QHotkey::QHotkey(const Qt::Key hotkeys)
+    : _keys(hotkeys), _hkid(_ghkid++),
       _loop(&Qt::QHotkey::registerHotkey, this),
-      _pData(new PlatformData)
+      _registered(false), _pData(new PlatformData)
 {}
 
 Qt::QHotkey::~QHotkey()

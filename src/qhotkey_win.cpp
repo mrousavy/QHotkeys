@@ -14,11 +14,10 @@ struct Qt::QHotkey::PlatformData
     UINT wmId;
 };
 
-Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key)
-    : _modifiers(modifiers), _key(key),
-      _hkid(_ghkid++), _registered(false),
+Qt::QHotkey::QHotkey(const Qt::Key hotkeys)
+    : _keys(hotkeys), _hkid(_ghkid++),
       _loop(&Qt::QHotkey::registerHotkey, this),
-      _pData(new PlatformData)
+      _registered(false), _pData(new PlatformData)
 {}
 
 Qt::QHotkey::~QHotkey()
@@ -30,6 +29,14 @@ Qt::QHotkey::~QHotkey()
     delete _pData;
 }
 
+UINT QtKeyToWin(UINT key) {
+    if (key >= 0x01000030 && key <= 0x01000047) {
+        return VK_F1 + (key - Qt::Key_F1);
+    }
+
+    return key;
+}
+
 void Qt::QHotkey::registerHotkey()
 {
     _pData->wmId = RegisterWindowMessage(L"WM_QHOTKEY_UNHOOK");
@@ -38,7 +45,20 @@ void Qt::QHotkey::registerHotkey()
     if (_registered)
         throw std::runtime_error("This QHotkey instance is already registered!");
 
-    auto result = RegisterHotKey(NULL, _hkid, getMod(_modifiers), getKey(_key));
+    UINT mod = 0;
+    UINT key = QtKeyToWin(_keys);
+
+    if (has(_keys, Qt::Key_Control)) {
+        mod |= MOD_CONTROL;
+    } else if (has(_keys, Qt::Key_Alt)) {
+        mod |= MOD_ALT;
+    } else if (has(_keys, Qt::Key_Shift)) {
+        mod |= MOD_SHIFT;
+    } else if (has(_keys, Qt::Key_Meta)) {
+        mod |= MOD_WIN;
+    }
+
+    auto result = RegisterHotKey(NULL, _hkid, mod, key);
     if (result == FALSE)
         throw std::runtime_error("Could not register hotkey! #" + GetLastError());
 
