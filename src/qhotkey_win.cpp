@@ -15,12 +15,14 @@ struct Qt::QHotkey::PlatformData
 };
 
 Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
-                     const callback_t callback)
+                     const QObject* receiver, const callback_t callback)
     : _modifiers(modifiers), _key(key),
-      _callback(callback), _hkid(_ghkid++),
+      _hkid(_ghkid++), _registered(false),
       _loop(&Qt::QHotkey::registerHotkey, this),
-      _registered(false), _pData(new PlatformData)
-{}
+      _pData(new PlatformData)
+{
+    QObject::connect(this, SIGNAL(QHotkey::pressed), receiver, SLOT(callback));
+}
 
 Qt::QHotkey::~QHotkey()
 {
@@ -55,7 +57,7 @@ void Qt::QHotkey::messageLoop() const
         if (msg.message == WM_HOTKEY &&
             msg.wParam == _hkid) {
             if (msg.wParam == _hkid) {
-                _callback(*this);
+                emit pressed(*this);
             }
         }
     }

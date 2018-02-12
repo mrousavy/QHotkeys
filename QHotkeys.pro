@@ -16,6 +16,8 @@ msvc {
     LIBS += -luser32
 } else:linux {
     SOURCES += src/qhotkey_linux.cpp
+} else:mingw {
+    SOURCES += src/qhotkey_linux.cpp
 } else:macx {
     SOURCES += src/qhotkey_osx.cpp
 } else {

@@ -41,11 +41,14 @@ public:
      * \param key The actual key to be registered as a hotkey
      */
     QHotkey(const ModifierKey modifiers, const Key key,
-            const callback_t callback);
+            const QObject* receiver, const callback_t callback);
     /*!
       * \brief ~QHotkey Destroy and unhook the Hotkey
       */
     ~QHotkey();
+
+signals:
+    void pressed(const QHotkey&) const;
 
 /////////////////
 ///  MEMBER   ///
@@ -55,8 +58,8 @@ private:
     const Key _key;
     const callback_t _callback;
     const int _hkid;
-    std::thread _loop;
     bool _registered;
+    std::thread _loop;
 
     struct PlatformData;
     PlatformData* _pData;
