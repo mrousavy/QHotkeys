@@ -14,15 +14,12 @@ struct Qt::QHotkey::PlatformData
     UINT wmId;
 };
 
-Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
-                     const QObject* receiver, const callback_t callback)
+Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key)
     : _modifiers(modifiers), _key(key),
       _hkid(_ghkid++), _registered(false),
       _loop(&Qt::QHotkey::registerHotkey, this),
       _pData(new PlatformData)
-{
-    QObject::connect(this, SIGNAL(QHotkey::pressed), receiver, SLOT(callback));
-}
+{}
 
 Qt::QHotkey::~QHotkey()
 {
@@ -57,7 +54,7 @@ void Qt::QHotkey::messageLoop() const
         if (msg.message == WM_HOTKEY &&
             msg.wParam == _hkid) {
             if (msg.wParam == _hkid) {
-                emit pressed(*this);
+                emit pressed(*this); // Qt callback slot
             }
         }
     }

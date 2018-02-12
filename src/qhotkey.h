@@ -17,7 +17,7 @@ namespace Qt
  */
 enum class /*QHOTKEYS_DLLSPEC*/ ModifierKey
 {
-    None    = 1 << 1,
+    None    = 1 << 0,
     Control = 1 << 1,
     Shift   = 1 << 2,
     Alt     = 1 << 3,
@@ -40,14 +40,18 @@ public:
      * \param modifiers The modifier keys for the hotkey (e.g. ::Control | ::Alt)
      * \param key The actual key to be registered as a hotkey
      */
-    QHotkey(const ModifierKey modifiers, const Key key,
-            const QObject* receiver, const callback_t callback);
+    QHotkey(const ModifierKey modifiers, const Key key);
     /*!
       * \brief ~QHotkey Destroy and unhook the Hotkey
       */
     ~QHotkey();
 
 signals:
+    /*!
+     * \brief pressed The Callback function which gets emitted
+     * once the hotkey has been pressed. Connect this function
+     * to a valid SLOT to handle this event.
+     */
     void pressed(const QHotkey&) const;
 
 /////////////////
@@ -56,7 +60,6 @@ signals:
 private:
     const ModifierKey _modifiers;
     const Key _key;
-    const callback_t _callback;
     const int _hkid;
     bool _registered;
     std::thread _loop;

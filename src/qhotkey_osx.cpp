@@ -14,12 +14,11 @@ struct Qt::QHotkey::PlatformData
     // TODO: PLATFORMDATA
 };
 
-Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key,
-                     const callback_t callback)
+Qt::QHotkey::QHotkey(const Qt::ModifierKey modifiers, const Qt::Key key)
     : _modifiers(modifiers), _key(key),
-      _callback(callback), _hkid(_ghkid++),
+      _hkid(_ghkid++), _registered(false),
       _loop(&Qt::QHotkey::registerHotkey, this),
-      _registered(false)
+      _pData(new PlatformData)
 {}
 
 Qt::QHotkey::~QHotkey()
