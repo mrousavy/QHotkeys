@@ -24,12 +24,18 @@ INCLUDEPATH += QHotkeys/src/
 ```cpp
 #include <qhotkeys.h>
 using namespace Qt;
+
 // ...
+
 void myCallback(const QHotkey& hotkey) {
   // This is executed on a seperate thread!
   cout << "Hotkey pressed!";
 }
+
 // ...
+
+// Register the hotkey
 QHotkey hotkey(ModifierKey::Control | ModifierKey::Alt, Key_I);
+// Connect pressed signal to one or more callback slots
 QObject::connect(&hotkey, &QHotkey::pressed, &myCallback);
 ```
