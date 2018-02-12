@@ -31,5 +31,5 @@ void myCallback(const QHotkey& hotkey) {
 }
 // ...
 QHotkey hotkey(ModifierKey::Control | ModifierKey::Alt, Key_I);
-QObject::connect(hotkey, &QHotkey::pressed, &myCallback);
+QObject::connect(&hotkey, &QHotkey::pressed, &myCallback);
 ```
